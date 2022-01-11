@@ -1,0 +1,60 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 10px 0;
+  border: 2px solid rgb(189, 189, 189);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.todo-list li {
+  background-color: rgb(243, 243, 243);
+}
+
+.todo-list li:nth-child(even) {
+  background-color: rgb(230, 228, 228);
+}
+
+.todo-list li.checked {
+  background-color: rgb(127, 255, 138);
+}
+
+.todo-list label {
+  display: flex;
+  padding: 10px 10px 10px 32px;
+  cursor: pointer;
+}
+
+.todo-list .checked label {
+  padding-left: 24px;
+}
+
+.todo-list .checked label:before {
+  position: relative;
+  left: -10px;
+  top: -2px;
+  display: block;
+  content: '';
+  border-color: #000;
+  border-style: solid;
+  border-width: 0 2px 2px 0;
+
+  transform: rotate(45deg);
+  height: 13px;
+  width: 6px;
+}
+
+.todo-list .check-input {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+}
