@@ -8,17 +8,24 @@ class TodoApp {
   init() {
     this.renderList();
 
-    const checksEl = this.todoListEl.getElementsByClassName(
-      this.todoCheckClassName
+    const checksEl = this.todoListEl.querySelectorAll(
+      `.${this.todoCheckClassName}`
     );
 
-    for (let el of checksEl) {
-      el.addEventListener(
-        'change',
-        (event) => this.handleChangeCheckbox(event),
-        false
-      );
-    }
+    this.setEventListeners(
+      checksEl,
+      'change',
+      this.handleChangeCheckbox.bind(this)
+    );
+
+    const deleteButtonsEl = this.todoListEl.querySelectorAll(`.delete-button`);
+    this.setEventListeners(deleteButtonsEl, 'click', this.handleDelete);
+  }
+
+  setEventListeners(selector, type, callback) {
+    selector.forEach((el) => {
+      el.addEventListener(type, (event) => callback(event), false);
+    });
   }
 
   createID() {
@@ -47,6 +54,16 @@ class TodoApp {
     return inputEl;
   }
 
+  createDeleteButton(todoId) {
+    const deleteButtonEl = document.createElement('button');
+    deleteButtonEl.textContent = 'Delete';
+    deleteButtonEl.classList.add('delete-button');
+
+    deleteButtonEl.setAttribute('data-todo-id', todoId);
+
+    return deleteButtonEl;
+  }
+
   createTodolabelElement(inputId) {
     const labelEl = document.createElement('label');
     labelEl.setAttribute('for', inputId);
@@ -62,42 +79,59 @@ class TodoApp {
   }
 
   renderList() {
+    const ulEl = document.createElement('ul');
+    ulEl.classList.add('todo-list');
+
     this.todos.forEach((todo) => {
       const textEl = this.createTodoTextElement(todo);
       const inputEl = this.createTodoCheckInputElement();
+
+      const todoId = inputEl.getAttribute('data-todo-id');
+      const deleteButtonEl = this.createDeleteButton(todoId);
       const labelEl = this.createTodolabelElement(inputEl.id);
 
       labelEl.appendChild(inputEl);
       labelEl.appendChild(textEl);
 
-      const todoId = inputEl.getAttribute('data-todo-id');
       const liEl = this.createLiElement(todoId);
       liEl.appendChild(labelEl);
+      liEl.appendChild(deleteButtonEl);
+      ulEl.appendChild(liEl);
 
-      this.todoListEl.appendChild(liEl);
-
-      todo.completed && this.setChecked(todoId, inputEl);
+      if (todo.completed) {
+        this.setChecked(inputEl);
+        this.setCheckedClassName(todoId, ulEl);
+      }
     });
+
+    this.todoListEl.querySelector('.loading').remove();
+    this.todoListEl.appendChild(ulEl);
   }
 
-  setChecked(todoId, inputEl) {
+  setChecked(inputEl) {
     if (inputEl.getAttribute('checked')) {
       inputEl.removeAttribute('checked');
     } else {
       inputEl.setAttribute('checked', 'checked');
     }
-    this.setCheckedClassName(todoId, this.todoListEl);
   }
 
-  setCheckedClassName(id, todoListEl) {
-    todoListEl.querySelector(`#${id}`).classList.toggle('checked');
+  setCheckedClassName(id, ulEl = this.todoListEl.querySelector('ul')) {
+    ulEl.querySelector(`#${id}`).classList.toggle('checked');
   }
 
   handleChangeCheckbox(event) {
     const el = event.target;
     const todoId = el.getAttribute('data-todo-id');
 
-    this.setChecked(todoId, el);
+    this.setChecked(el);
+    this.setCheckedClassName(todoId, this.todoListEl);
+  }
+
+  handleDelete(event) {
+    const el = event.target;
+
+    el.parentNode.remove();
   }
 }
 

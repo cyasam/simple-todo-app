@@ -3,7 +3,7 @@ import '../src/index.css';
 import TodoApp from './todo-app';
 
 // Init
-const todoListsEl = document.getElementsByClassName('todo-list');
+const todoListsEl = document.getElementsByClassName('todo-list-wrapper');
 const allTodosData = [
   [
     {
@@ -32,10 +32,12 @@ const runApp = () => {
   }
 };
 
-fetch('https://jsonplaceholder.typicode.com/todos')
-  .then((response) => response.json())
-  .then((data) => {
-    allTodosData.push(data);
+window.addEventListener('DOMContentLoaded', function () {
+  fetch('https://jsonplaceholder.typicode.com/todos')
+    .then((response) => response.json())
+    .then((data) => {
+      allTodosData.push(data);
 
-    runApp();
-  });
+      runApp();
+    });
+});
